@@ -1,0 +1,16 @@
+[Unit]
+Description=Webcam Proxy
+After=multi-user.target
+
+[Service]
+Environment=CAMUSER=user
+Environment=CAMPASS=password
+Environment=CAMHOST=hostname
+ExecStart=/usr/bin/python /home/pi/camproxy.py
+User=pi
+WorkingDirectory=/tmp
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+

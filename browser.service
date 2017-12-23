@@ -1,0 +1,14 @@
+[Unit]
+Description=Webcam Browser
+After=multi-user.target
+
+[Service]
+Environment=DISPLAY=:0
+ExecStart=/usr/bin/chromium-browser --incognito --noerrdialogs --kiosk http://localhost:5000 --no-first-run --touch-events=enabled --fast --fast-start --disable-infobars --disable-session-crashed-bubble --disable-tab-switcher --disable-translate --enable-low-res-tiling --disk-cache-dir /dev/null
+User=pi
+WorkingDirectory=/home/pi
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+

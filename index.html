@@ -1,0 +1,46 @@
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+body {
+	margin: 0;
+	padding: 0;
+	overflow: hidden;
+}
+#cams {
+	line-height: 0;
+	column-count: 2;
+	column-gap: 0px;
+}
+
+#cams img {
+	width: 960px;
+	height: 540px;
+}
+</style>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+<script>
+
+var c = 0;
+
+function refreshCameras() {
+  var id = "#cam";
+
+  c++;
+  $(id.concat(c.toString())).attr('src', function(i, old) { return old.replace(/\?.+/,"?i=" + (Math.random()*1000)); });
+  c %= 4;
+}
+$(document).ready(function() {
+  $.ajaxSetup({cache: false});
+  setInterval(refreshCameras, 1000);
+});
+</script>
+</head>
+<body>
+<section id="cams">
+  <img id="cam1" class="camera" src="/cam1.jpg?i=0"></img>
+  <img id="cam2" class="camera" src="/cam2.jpg?i=0"></img>
+  <img id="cam3" class="camera" src="/cam3.jpg?i=0"></img>
+  <img id="cam4" class="camera" src="/cam4.jpg?i=0"></img>
+</body>
+</html>
