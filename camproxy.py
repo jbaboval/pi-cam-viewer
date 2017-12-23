@@ -42,12 +42,14 @@ def getImg(channel):
     except:
         pass
 
-    url = 'http://%s/ISAPI/Streaming/channels/%s01/picture' % (CAMHOST, channel)
+    url = 'http://%s/ISAPI/Streaming/channels/%s01/picture' % (HOST, channel)
     try:
         req = requests.get(url, auth=(USER, PASS))
+        req.raise_for_status()
         with open('/tmp/static/temp.jpg', 'wb') as f:
             f.write(req.content)
-    except:
+    except Exception as e:
+        print e
         return
     else:
         shutil.copyfile('/tmp/static/temp.jpg', '/tmp/static/cam%s.jpg' % str(channel))
@@ -55,7 +57,6 @@ def getImg(channel):
 def jupiterImageUpdater():
 
     nextJupiter = datetime.utcnow()
-    nextWestbrook = nextJupiter
 
     while(True):
 
@@ -96,19 +97,36 @@ def jupiterImageUpdater():
                 next
             else:
                 shutil.copyfile('/tmp/static/temp.jpg', '/tmp/static/jupiter.jpg')
-        elif (now >= nextWestbrook):
+        else:
+            time.sleep(2)
+
+    print ("Exiting Jupiter Image Thread")
+
+def westbrookImageUpdater():
+
+    nextWestbrook = datetime.utcnow()
+
+    while(True):
+
+        now = datetime.utcnow()
+        if (now >= nextWestbrook):
 
             try:
                 getImg(1)
                 getImg(2)
                 getImg(3)
-            except:
+            except Exception as e:
+                print e
                 next
 
             nextWestbrook = now + timedelta(seconds=8)
         else:
             time.sleep(2)
-                
+
+    print ("Exiting Westbrook Image Thread")
+
+def flaskThread():
+    app.run(threaded=True, use_reloader=False)
 
 if __name__ == '__main__':
     try:
@@ -116,8 +134,20 @@ if __name__ == '__main__':
     except:
         pass
     shutil.copyfile('/home/pi/index.html', '/tmp/static/index.html')
+
+    print ("Starting Flask")
+    f = threading.Thread(target=flaskThread)
+    f.daemon = True
+    f.start()
+
+    print ("Starting Jupiter Image Thread")
+
     t = threading.Thread(target=jupiterImageUpdater)
     t.daemon = True
     t.start()
-    app.run(threaded=True)
 
+    print ("Starting Westbrook Image Thread")
+
+    t2 = threading.Thread(target=westbrookImageUpdater())
+    t2.daemon = True
+    t2.start()
