@@ -51,8 +51,11 @@ def getImg(channel):
     except Exception as e:
         print e
         return
-    else:
+
+    try:
         shutil.copyfile('/tmp/static/temp.jpg', '/tmp/static/cam%s.jpg' % str(channel))
+    except:
+        pass
 
 def jupiterImageUpdater():
 
@@ -95,8 +98,12 @@ def jupiterImageUpdater():
                     f.write(req.content)
             except:
                 next
-            else:
+
+            try:
                 shutil.copyfile('/tmp/static/temp.jpg', '/tmp/static/jupiter.jpg')
+            except:
+                pass
+
         else:
             time.sleep(2)
 
